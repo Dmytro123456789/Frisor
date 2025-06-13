@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Послуги - Frisor Barbershop</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header-logo">
+        <div class="logo">
+          <img src="img/logoMin.png" alt="Frisor Shield" class="logo-icon" />
+          <h1 class="frisor-text">FRISOR</h1>
+        </div>
+        <div class="header-menu">
+          <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="services.html">SERVICES</a></li>
+            <li><a href="barbers.html">BARBERS</a></li>
+            <li><a href="contacts.html">CONTACTS</a></li>
+            <li><a href="auth.html" class="login-btn"><i class="fas fa-user"></i> LOGIN</a></li>
+          </ul>
+        </div>
+      </header>
+
+    <section class="services-section">
+        <h2>Наші Послуги</h2>
+        <div class="services-grid" id="servicesGrid">
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="img/logoMin.png" alt="Frisor Logo">
+                <h2>FRISOR</h2>
+            </div>
+            <div class="footer-links">
+                <h3>Швидкі посилання</h3>
+                <ul>
+                    <li><a href="index.html">Головна</a></li>
+                    <li><a href="services.html">Послуги</a></li>
+                    <li><a href="barbers.html">Барбери</a></li>
+                    <li><a href="contacts.html">Контакти</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Контакти</h3>
+                <p>Шашкевича, 3</p>
+                <p>м. Тернопіль</p>
+                <p>098 324 34 03</p>
+                <p>info@frisor.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Frisor Barbershop. Всі права захищені.</p>
+        </div>
+        <div class="footer-admin-btn-wrap">
+            <a href="admin.html" class="admin-footer-btn">Admin Panel</a>
+        </div>
+    </footer>
+
+    <script>
+        async function loadServices() {
+            const grid = document.getElementById('servicesGrid');
+            grid.innerHTML = '';
+            try {
+                const res = await fetch('http://localhost:5000/api/services');
+                const services = await res.json();
+                if (!services.length) {
+                    grid.innerHTML = '<p>Послуги не знайдено.</p>';
+                    return;
+                }
+                services.forEach(service => {
+                    const card = document.createElement('div');
+                    card.className = 'service-card';
+                    let icon = '<i class="fas fa-cut"></i>';
+                    if (service.name.toLowerCase().includes('бород')) icon = '<i class="fas fa-razor"></i>';
+                    if (service.name.toLowerCase().includes('догляд')) icon = '<i class="fas fa-spa"></i>';
+                    if (service.name.toLowerCase().includes('дит')) icon = '<i class="fas fa-child"></i>';
+                    card.innerHTML = `
+                        ${icon}
+                        <h3>${service.name}</h3>
+                        <p>${service.description}</p>
+                        <p class="price">${service.price} грн</p>
+                        <p>Тривалість: ${service.duration} хв</p>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (e) {
+                grid.innerHTML = '<p>Помилка завантаження послуг.</p>';
+            }
+        }
+        loadServices();
+
+        document.getElementById('adminLoginBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const password = prompt('Введіть пароль для входу в адмін-панель:');
+            if (password === 'admin123') {
+                sessionStorage.setItem('isAdmin', 'true');
+                window.location.href = 'admin.html';
+            } else {
+                alert('Невірний пароль!');
+            }
+        });
+    </script>
+    <script src="header-auth.js"></script>
+    <script src="footer-auth.js"></script>
+</body>
+</html> 

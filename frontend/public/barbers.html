@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Барбери - Frisor Barbershop</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body style="background-color: #f2f2df;">
+    <header class="header-logo">
+        <div class="logo">
+          <img src="img/logoMin.png" alt="Frisor Shield" class="logo-icon" />
+          <h1 class="frisor-text">FRISOR</h1>
+        </div>
+        <div class="header-menu">
+          <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="services.html">SERVICES</a></li>
+            <li><a href="barbers.html">BARBERS</a></li>
+            <li><a href="contacts.html">CONTACTS</a></li>
+            <li><a href="auth.html" class="login-btn"><i class="fas fa-user"></i> LOGIN</a></li>
+          </ul>
+        </div>
+      </header>
+
+    <section class="barbers-section">
+        <h2>Наші Барбери</h2>
+        <div id="barbersList"></div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="img/logoMin.png" alt="Frisor Logo">
+                <h2>FRISOR</h2>
+            </div>
+            <div class="footer-links">
+                <h3>Швидкі посилання</h3>
+                <ul>
+                    <li><a href="index.html">Головна</a></li>
+                    <li><a href="services.html">Послуги</a></li>
+                    <li><a href="barbers.html">Барбери</a></li>
+                    <li><a href="contacts.html">Контакти</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Контакти</h3>
+                <p>Шашкевича, 3</p>
+                <p>м. Тернопіль</p>
+                <p>098 324 34 03</p>
+                <p>info@frisor.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Frisor Barbershop. Всі права захищені.</p>
+        </div>
+        <div class="footer-admin-btn-wrap">
+            <a href="admin.html" class="admin-footer-btn">Admin Panel</a>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('http://localhost:5000/api/barbers');
+                if (!response.ok) throw new Error('Failed to load barbers');
+                const barbers = await response.json();
+                const barbersList = document.getElementById('barbersList');
+                barbersList.innerHTML = '';
+                barbers.forEach(barber => {
+                    const barberElement = document.createElement('div');
+                    barberElement.className = 'barber-card';
+                    barberElement.innerHTML = `
+                        <img src="${barber.image_url || ''}" alt="${barber.name}" style="max-width:120px;max-height:120px; border-radius:50%; margin-bottom:0.5rem;">
+                        <h3>${barber.name}</h3>
+                        <p><b>Посада:</b> ${barber.position || ''}</p>
+                        <p><b>Досвід:</b> ${barber.experience} років</p>
+                        <p><b>Опис:</b> ${barber.description || ''}</p>
+                        <p><b>Ранг:</b> ${barber.rang || (barber.rank && barber.rank.name) || 'Не вказано'}</p>
+                    `;
+                    barbersList.appendChild(barberElement);
+                });
+            } catch (error) {
+                document.getElementById('barbersList').innerHTML = '<p>Помилка завантаження барберів</p>';
+            }
+        });
+    </script>
+    <script src="header-auth.js"></script>
+    <script src="footer-auth.js"></script>
+</body>
+</html> 

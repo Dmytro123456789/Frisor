@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frisor Barbershop - Запис</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header-logo">
+        <div class="logo">
+            <img src="img/logoMin.png" alt="Frisor Shield" class="logo-icon" />
+            <h1 class="frisor-text">FRISOR</h1>
+        </div>
+        <div class="header-menu">
+            <ul>
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="services.html">SERVICES</a></li>
+                <li><a href="barbers.html">BARBERS</a></li>
+                <li><a href="contacts.html">CONTACTS</a></li>
+                <li><a href="auth.html" class="login-btn"><i class="fas fa-user"></i> LOGIN</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <section class="booking-section">
+        <div class="booking-container">
+            <h2 class="booking-title">Записатися на послугу</h2>
+            <form id="bookingForm" class="booking-form">
+                <div class="form-group">
+                    <label for="name">Ім'я:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Телефон:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Дата:</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="time">Час:</label>
+                    <select id="time" name="time" required>
+                        <option value="">Виберіть годину</option>
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="12:00">12:00</option>
+                        <option value="13:00">13:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                        <option value="18:00">18:00</option>
+                        <option value="19:00">19:00</option>
+                        <option value="20:00">20:00</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="service">Послуга:</label>
+                    <select id="service" name="service" required>
+                        <option value="">Виберіть послугу</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="barber">Барбер:</label>
+                    <select id="barber" name="barber" required>
+                        <option value="">Виберіть барбера</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="notes">Додаткова інформація:</label>
+                    <textarea id="notes" name="notes" rows="3"></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Записатися</button>
+            </form>
+            <div id="message" class="message"></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="img/logoMin.png" alt="Frisor Shield" class="logo-icon" />
+                <h2>FRISOR</h2>
+            </div>
+            <div class="footer-links">
+                <h3>Швидкі посилання</h3>
+                <ul>
+                    <li><a href="index.html">Головна</a></li>
+                    <li><a href="services.html">Послуги</a></li>
+                    <li><a href="barbers.html">Барбери</a></li>
+                    <li><a href="contacts.html">Контакти</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Контакти</h3>
+                <p>вул. Шевченка 10, Київ</p>
+                <p>+380 44 123 4567</p>
+                <p>info@frisor.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Frisor Barbershop. Всі права захищені.</p>
+        </div>
+        <div class="footer-admin-btn-wrap">
+            <a href="admin.html" class="admin-footer-btn">Admin Panel</a>
+        </div>
+    </footer>
+
+    <script src="header-auth.js"></script>
+    <script src="booking-auth.js"></script>
+    <script src="footer-auth.js"></script>
+
+    <script>
+        async function loadServices() {
+            try {
+                const response = await fetch('http://localhost:5000/api/services');
+                if (!response.ok) {
+                    throw new Error('Failed to load services');
+                }
+                const services = await response.json();
+                const serviceSelect = document.getElementById('service');
+                
+                serviceSelect.innerHTML = '<option value="">Виберіть послугу</option>';
+                
+                services.forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service._id;
+                    option.textContent = `${service.name} - ${service.price} грн`;
+                    serviceSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading services:', error);
+                showMessage('Помилка завантаження послуг', 'error');
+            }
+        }
+
+        async function loadBarbers() {
+            try {
+                const response = await fetch('http://localhost:5000/api/barbers');
+                if (!response.ok) {
+                    throw new Error('Failed to load barbers');
+                }
+                const barbers = await response.json();
+                const barberSelect = document.getElementById('barber');
+                
+                barberSelect.innerHTML = '<option value="">Виберіть барбера</option>';
+                
+                barbers.forEach(barber => {
+                    const option = document.createElement('option');
+                    option.value = barber._id;
+                    option.textContent = barber.name;
+                    barberSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading barbers:', error);
+                showMessage('Помилка завантаження барберів', 'error');
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadServices();
+            loadBarbers();
+        });
+
+        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            let phoneInput = document.getElementById('phone').value;
+            const userPhone = localStorage.getItem('userPhone');
+            if (userPhone) {
+                phoneInput = userPhone;
+                document.getElementById('phone').value = userPhone; // для відображення в полі
+            }
+            const formData = {
+                clientName: document.getElementById('name').value,
+                clientPhone: phoneInput,
+                serviceId: document.getElementById('service').value,
+                barberId: document.getElementById('barber').value,
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value,
+                status: 'pending',
+                userId: localStorage.getItem('userId') || undefined,
+                notes: document.getElementById('notes').value
+            };
+            if (!formData.clientName || !formData.clientPhone || !formData.serviceId || !formData.barberId || !formData.date || !formData.time) {
+                showMessage('Будь ласка, заповніть всі обов\'язкові поля', 'error');
+                return;
+            }
+            try {
+                const response = await fetch('http://localhost:5000/api/appointments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage('Запис успішно створено!', 'success');
+                    document.getElementById('bookingForm').reset();
+                } else {
+                    showMessage(data.message || 'Помилка при створенні запису', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Помилка при відправці форми', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

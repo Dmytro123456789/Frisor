@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Адмін-панель - Frisor Barbershop</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header-logo">
+        <div class="logo">
+          <img src="img/logoMin.png" alt="Frisor Shield" class="logo-icon" />
+          <h1 class="frisor-text">FRISOR</h1>
+        </div>
+        <div class="header-menu">
+          <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="services.html">SERVICES</a></li>
+            <li><a href="barbers.html">BARBERS</a></li>
+            <li><a href="contacts.html">CONTACTS</a></li>
+            <li><a href="auth.html" class="login-btn"><i class="fas fa-user"></i> LOGIN</a></li>
+          </ul>
+        </div>
+      </header>
+
+    <section class="admin-section">
+        <h2>Адмін-панель</h2>
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="showTab('appointments')">Записи</button>
+            <button class="tab-btn" onclick="showTab('services')">Послуги</button>
+            <button class="tab-btn" onclick="showTab('barbers')">Барбери</button>
+            <button class="tab-btn" onclick="showTab('users')">Users</button>
+        </div>
+
+        <div id="appointments" class="tab-content active">
+            <button class="add-btn" onclick="showModal('addBookingModal')">Додати запис</button>
+            <div class="list-container" id="appointmentsList">
+            </div>
+        </div>
+
+        <div id="services" class="tab-content">
+            <button class="add-btn" onclick="showModal('addServiceModal')">Додати послугу</button>
+            <div class="list-container" id="servicesList">
+            </div>
+        </div>
+
+        <div id="barbers" class="tab-content">
+            <button class="add-btn" onclick="showModal('addBarberModal')">Додати барбера</button>
+            <div class="list-container" id="barbersList">
+            </div>
+        </div>
+
+        <div id="users" class="tab-content">
+            <h3>Користувачі</h3>
+            <div class="list-container">
+                <table class="table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ім'я</th>
+                            <th>Email</th>
+                            <th>Роль</th>
+                            <th>Дії</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <div id="addBookingModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('addBookingModal')"></button>
+            <h3>Додати запис</h3>
+            <form id="addBookingForm">
+                <input type="text" name="clientName" placeholder="Ім'я клієнта" required>
+                <input type="tel" name="clientPhone" placeholder="Телефон клієнта" required>
+                <select name="serviceId" id="bookingService" required>
+                </select>
+                <select name="barberId" id="bookingBarber" required>
+                </select>
+                <input type="date" name="date" required>
+                <input type="time" name="time" required>
+                <select name="status" id="bookingStatus" required>
+                    <option value="pending">Очікує</option>
+                    <option value="confirmed">Підтверджено</option>
+                    <option value="completed">Виконано</option>
+                    <option value="cancelled">Скасовано</option>
+                </select>
+                <button type="submit">Додати</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addServiceModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('addServiceModal')"></button>
+            <h3>Додати послугу</h3>
+            <form id="addServiceForm">
+                <input type="text" name="name" placeholder="Назва послуги" required>
+                <textarea name="description" placeholder="Опис послуги" required></textarea>
+                <input type="number" name="price" placeholder="Ціна" required>
+                <input type="number" name="duration" placeholder="Тривалість (хв)" required>
+                <input type="text" name="image_url" placeholder="URL зображення">
+                <button type="submit">Додати</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addBarberModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('addBarberModal')"></button>
+            <h3>Додати барбера</h3>
+            <form id="addBarberForm">
+                <input type="text" name="name" placeholder="Ім'я" required>
+                <input type="number" name="experience" placeholder="Досвід (роки)" required>
+                <textarea name="description" placeholder="Опис"></textarea>
+                <input type="text" name="image_url" placeholder="URL зображення">
+                <select name="rank" id="barberRank" required>
+                    <option value="">Виберіть ранг</option>
+                </select>
+                <button type="submit">Додати</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="editAppointmentModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('editAppointmentModal')"></button>
+            <h3>Редагувати запис</h3>
+            <form id="editAppointmentForm">
+                <input type="hidden" name="id" id="editAppointmentId">
+                <input type="text" name="client_name" id="editAppointmentClient" placeholder="Ім'я клієнта" required>
+                <select name="service_id" id="editAppointmentService" required>
+                </select>
+                <select name="barber_id" id="editAppointmentBarber" required>
+                </select>
+                <input type="date" name="booking_date" id="editAppointmentDate" required>
+                <input type="time" name="booking_time" id="editAppointmentTime" required>
+                <select name="status" id="editAppointmentStatus" required>
+                    <option value="pending">Очікує</option>
+                    <option value="confirmed">Підтверджено</option>
+                    <option value="completed">Виконано</option>
+                    <option value="cancelled">Скасовано</option>
+                </select>
+                <button type="submit">Зберегти</button>
+                <button type="button" onclick="closeModal('editAppointmentModal')">Скасувати</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="editServiceModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('editServiceModal')"></button>
+            <h3>Редагувати послугу</h3>
+            <form id="editServiceForm">
+                <input type="hidden" name="id" id="editServiceId">
+                <input type="text" name="name" id="editServiceName" placeholder="Назва послуги" required>
+                <textarea name="description" id="editServiceDescription" placeholder="Опис послуги" required></textarea>
+                <input type="number" name="price" id="editServicePrice" placeholder="Ціна" required>
+                <input type="number" name="duration" id="editServiceDuration" placeholder="Тривалість (хв)" required>
+                <input type="text" name="image_url" id="editServiceImage" placeholder="URL зображення">
+                <button type="submit">Зберегти</button>
+                <button type="button" onclick="closeModal('editServiceModal')">Скасувати</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="editBarberModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('editBarberModal')"></button>
+            <h3>Редагувати барбера</h3>
+            <form id="editBarberForm">
+                <input type="hidden" name="id" id="editBarberId">
+                <input type="text" name="name" id="editBarberName" placeholder="Ім'я" required>
+                <input type="number" name="experience" id="editBarberExperience" placeholder="Досвід (роки)" required>
+                <select name="rank" id="editBarberRank" required>
+                    <option value="">Виберіть ранг</option>
+                </select>
+                <input type="text" name="image" id="editBarberImage" placeholder="URL зображення">
+                <button type="submit">Зберегти</button>
+                <button type="button" onclick="closeModal('editBarberModal')">Скасувати</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="editUserModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('editUserModal')"></button>
+            <h3>Редагувати користувача</h3>
+            <form id="editUserForm">
+                <input type="hidden" name="id" id="editUserId">
+                <label>Ім'я</label>
+                <input type="text" name="name" id="editUserName" required>
+                <label>Email</label>
+                <input type="email" name="email" id="editUserEmail" required>
+                <label>Телефон</label>
+                <input type="tel" name="phone" id="editUserPhone" required>
+                <label>Роль</label>
+                <select name="role" id="editUserRole" required>
+                    <option value="user">user</option>
+                    <option value="admin">admin</option>
+                </select>
+                <button type="submit">Зберегти</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <img src="img/logoMin.png" alt="Frisor Shield" class="logo-icon" />
+            <h2>FRISOR</h2>
+          </div>
+          <div class="footer-links">
+            <h3>Швидкі посилання</h3>
+            <ul>
+              <li><a href="index.html">Головна</a></li>
+              <li><a href="services.html">Послуги</a></li>
+              <li><a href="barbers.html">Барбери</a></li>
+              <li><a href="contacts.html">Контакти</a></li>
+            </ul>
+          </div>
+          <div class="footer-contact">
+            <h3>Контакти</h3>
+            <p>Шашкевича, 3</p>
+            <p>м. Тернопіль</p>
+            <p>098 324 34 03</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Frisor Barbershop. Всі права захищені.</p>
+        </div>
+      </footer>
+
+    <script src="header-auth.js"></script>
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            
+            if (modalId === 'addBookingModal') {
+                loadBookingLists();
+            }
+        }
+
+        async function loadBookingLists() {
+            try {
+                const [servicesResponse, barbersResponse] = await Promise.all([
+                    fetch('http://localhost:5000/api/services'),
+                    fetch('http://localhost:5000/api/barbers')
+                ]);
+
+                const services = await servicesResponse.json();
+                const barbers = await barbersResponse.json();
+
+                const serviceSelect = document.getElementById('bookingService');
+                const barberSelect = document.getElementById('bookingBarber');
+
+                serviceSelect.innerHTML = '<option value="">Виберіть послугу</option>';
+                services.forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service._id;
+                    option.textContent = `${service.name} - ${service.price} грн`;
+                    serviceSelect.appendChild(option);
+                });
+
+                barberSelect.innerHTML = '<option value="">Виберіть барбера</option>';
+                barbers.forEach(barber => {
+                    const option = document.createElement('option');
+                    option.value = barber._id;
+                    option.textContent = `${barber.name}${barber.position ? ' - ' + barber.position : ''}`;
+                    barberSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading lists:', error);
+                showMessage('Помилка завантаження списків', 'error');
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            const [services, barbers] = await Promise.all([
+                fetch('http://localhost:5000/api/services').then(res => res.json()),
+                fetch('http://localhost:5000/api/barbers').then(res => res.json())
+            ]);
+            const serviceMap = {};
+            services.forEach(s => serviceMap[s._id] = s.name);
+            const barberMap = {};
+            barbers.forEach(b => barberMap[b._id] = b.name);
+
+            fetch('http://localhost:5000/api/appointments')
+                .then(res => res.json())
+                .then(appointments => {
+                    const appointmentsList = document.getElementById('appointmentsList');
+                    appointmentsList.innerHTML = '';
+                    appointments.forEach(appointment => {
+                        const statusMap = {
+                            'pending': 'Очікує',
+                            'confirmed': 'Підтверджено',
+                            'completed': 'Виконано',
+                            'cancelled': 'Скасовано'
+                        };
+                        const statusUA = statusMap[appointment.status] || appointment.status || '';
+                        const bookingElement = document.createElement('div');
+                        bookingElement.className = 'list-item';
+                        bookingElement.innerHTML = `
+                            <div>
+                                <p>Клієнт: ${appointment.clientName || '—'}</p>
+                                <p>Послуга: ${serviceMap[appointment.serviceId] || '—'}</p>
+                                <p>Барбер: ${barberMap[appointment.barberId] || '—'}</p>
+                                <p>Дата: ${appointment.date ? new Date(appointment.date).toLocaleDateString() : '—'}</p>
+                                <p>Час: ${appointment.time || '—'}</p>
+                                <p>Статус: ${statusUA}</p>
+                            </div>
+                            <div class="button-group">
+                                <button onclick="editAppointment('${appointment._id}', '${appointment.clientName}', '${appointment.serviceId}', '${appointment.barberId}', '${appointment.date}', '${appointment.time}', '${appointment.status}')">Редагувати</button>
+                                <button onclick="deleteAppointment('${appointment._id}')">Видалити</button>
+                            </div>
+                        `;
+                        appointmentsList.appendChild(bookingElement);
+                    });
+                });
+
+            fetch('http://localhost:5000/api/services')
+                .then(res => res.json())
+                .then(services => {
+                    const servicesList = document.getElementById('servicesList');
+                    const bookingService = document.getElementById('bookingService');
+                    
+                    servicesList.innerHTML = '';
+                    bookingService.innerHTML = '<option value="">Виберіть послугу</option>';
+                    
+                    services.forEach(service => {
+                        const serviceElement = document.createElement('div');
+                        serviceElement.className = 'list-item';
+                        serviceElement.innerHTML = `
+                            <div>
+                                <p>Назва: ${service.name}</p>
+                                <p>Ціна: ${service.price} грн</p>
+                                <p>Тривалість: ${service.duration} хв</p>
+                            </div>
+                            <div class="button-group">
+                                <button onclick="editService('${service._id}', '${service.name}', '${service.description}', ${service.price}, ${service.duration}, '${service.image_url}')">Редагувати</button>
+                                <button onclick="deleteService('${service._id}')">Видалити</button>
+                            </div>
+                        `;
+                        servicesList.appendChild(serviceElement);
+
+                        const option = document.createElement('option');
+                        option.value = service._id;
+                        option.textContent = `${service.name} - ${service.price} грн`;
+                        bookingService.appendChild(option);
+                    });
+                });
+
+            fetch('http://localhost:5000/api/barbers')
+                .then(res => res.json())
+                .then(barbers => {
+                    const barbersList = document.getElementById('barbersList');
+                    const bookingBarber = document.getElementById('bookingBarber');
+                    
+                    barbersList.innerHTML = '';
+                    bookingBarber.innerHTML = '<option value="">Виберіть барбера</option>';
+                    
+                    barbers.forEach(barber => {
+                        const barberElement = document.createElement('div');
+                        barberElement.className = 'list-item';
+                        barberElement.innerHTML = `
+                            <div>
+                                <p>Ім'я: ${barber.name}</p>
+                                <p>Посада: ${barber.position || ''}</p>
+                                <p>Досвід: ${barber.experience} років</p>
+                                <p>Опис: ${barber.description || ''}</p>
+                                <p>Зображення: <img src="${barber.image_url || ''}" alt="${barber.name}" style="max-width:80px;max-height:80px;"></p>
+                                <p>Ранг: ${barber.rang || (barber.rank && barber.rank.name) || 'Не вказано'}</p>
+                            </div>
+                            <div class="button-group">
+                                <button onclick="editBarber('${barber._id}', '${barber.name}', ${barber.experience}, '${barber.rank ? barber.rank._id : ''}', '${barber.image || barber.image_url || ''}')">Редагувати</button>
+                                <button onclick="deleteBarber('${barber._id}')">Видалити</button>
+                            </div>
+                        `;
+                        barbersList.appendChild(barberElement);
+
+                        const option = document.createElement('option');
+                        option.value = barber._id;
+                        option.textContent = `${barber.name}${barber.position ? ' - ' + barber.position : ''}`;
+                        bookingBarber.appendChild(option);
+                    });
+                });
+        });
+
+        async function deleteAppointment(id) {
+            if (confirm('Ви впевнені, що хочете видалити цей запис?')) {
+                try {
+                    const response = await fetch(`http://localhost:5000/api/appointments/${id}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        showMessage('Запис успішно видалено', 'success');
+                        location.reload();
+                    } else {
+                        const error = await response.json();
+                        showMessage(error.message || 'Помилка при видаленні запису', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showMessage('Помилка при видаленні запису', 'error');
+                }
+            }
+        }
+
+        async function deleteService(id) {
+            if (confirm('Ви впевнені, що хочете видалити цю послугу?')) {
+                try {
+                    const response = await fetch(`http://localhost:5000/api/services/${id}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        showMessage('Послугу успішно видалено', 'success');
+                        location.reload();
+                    } else {
+                        const error = await response.json();
+                        showMessage(error.message || 'Помилка при видаленні послуги', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showMessage('Помилка при видаленні послуги', 'error');
+                }
+            }
+        }
+
+        async function deleteBarber(id) {
+            if (confirm('Ви впевнені, що хочете видалити цього барбера?')) {
+                try {
+                    const response = await fetch(`http://localhost:5000/api/barbers/${id}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        showMessage('Барбера успішно видалено', 'success');
+                        location.reload();
+                    } else {
+                        const error = await response.json();
+                        showMessage(error.message || 'Помилка при видаленні барбера', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showMessage('Помилка при видаленні барбера', 'error');
+                }
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const addBookingForm = document.getElementById('addBookingForm');
+            if (addBookingForm) {
+                addBookingForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    try {
+                        const response = await fetch('http://localhost:5000/api/appointments', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                clientName: formData.get('clientName'),
+                                clientPhone: formData.get('clientPhone'),
+                                serviceId: formData.get('serviceId'),
+                                barberId: formData.get('barberId'),
+                                date: formData.get('date'),
+                                time: formData.get('time'),
+                                status: formData.get('status') || 'pending'
+                            })
+                        });
+                        if (response.ok) {
+                            showMessage('Запис успішно додано', 'success');
+                            closeModal('addBookingModal');
+                            e.target.reset();
+                            location.reload();
+                        } else {
+                            const error = await response.json();
+                            showMessage(error.message || 'Помилка при додаванні запису', 'error');
+                        }
+                    } catch (error) {
+                        showMessage('Помилка при відправці форми', 'error');
+                    }
+                });
+            }
+
+            const addBarberForm = document.getElementById('addBarberForm');
+            if (addBarberForm) {
+                addBarberForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    try {
+                        const response = await fetch('http://localhost:5000/api/barbers', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                name: formData.get('name'),
+                                experience: parseInt(formData.get('experience')),
+                                description: formData.get('description'),
+                                image_url: formData.get('image_url'),
+                                rank: formData.get('rank')
+                            })
+                        });
+                        if (response.ok) {
+                            showMessage('Барбера успішно додано', 'success');
+                            closeModal('addBarberModal');
+                            e.target.reset();
+                            await loadBarbers();
+                        } else {
+                            const error = await response.json();
+                            showMessage(error.message || 'Помилка при додаванні барбера', 'error');
+                        }
+                    } catch (error) {
+                        showMessage('Помилка при відправці форми', 'error');
+                    }
+                });
+            }
+
+            const addServiceForm = document.getElementById('addServiceForm');
+            if (addServiceForm) {
+                addServiceForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    try {
+                        const response = await fetch('http://localhost:5000/api/services', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                name: formData.get('name'),
+                                description: formData.get('description'),
+                                price: formData.get('price'),
+                                duration: formData.get('duration'),
+                                image_url: formData.get('image_url')
+                            })
+                        });
+                        if (response.ok) {
+                            showMessage('Послугу успішно додано', 'success');
+                            closeModal('addServiceModal');
+                            e.target.reset();
+                            await loadServices();
+                        } else {
+                            const error = await response.json();
+                            showMessage(error.message || 'Помилка при додаванні послуги', 'error');
+                        }
+                    } catch (error) {
+                        showMessage('Помилка при відправці форми', 'error');
+                    }
+                });
+            }
+
+            const editBarberForm = document.getElementById('editBarberForm');
+            if (editBarberForm) {
+                editBarberForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const id = formData.get('id');
+                    try {
+                        const response = await fetch(`http://localhost:5000/api/barbers/${id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                name: formData.get('name'),
+                                experience: parseInt(formData.get('experience')),
+                                image: formData.get('image'),
+                                rank: formData.get('rank')
+                            })
+                        });
+                        if (response.ok) {
+                            showMessage('Барбера успішно оновлено', 'success');
+                            closeModal('editBarberModal');
+                            await loadBarbers();
+                        } else {
+                            const error = await response.json();
+                            showMessage(error.message || 'Помилка при оновленні барбера', 'error');
+                        }
+                    } catch (error) {
+                        showMessage('Помилка при оновленні барбера', 'error');
+                    }
+                });
+            }
+
+            const editServiceForm = document.getElementById('editServiceForm');
+            if (editServiceForm) {
+                editServiceForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const id = formData.get('id');
+                    try {
+                        const response = await fetch(`http://localhost:5000/api/services/${id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                name: formData.get('name'),
+                                description: formData.get('description'),
+                                price: parseInt(formData.get('price')),
+                                duration: parseInt(formData.get('duration')),
+                                image_url: formData.get('image_url')
+                            })
+                        });
+                        if (response.ok) {
+                            showMessage('Послугу успішно оновлено', 'success');
+                            closeModal('editServiceModal');
+                            await loadServices();
+                        } else {
+                            const error = await response.json();
+                            showMessage(error.message || 'Помилка при оновленні послуги', 'error');
+                        }
+                    } catch (error) {
+                        showMessage('Помилка при оновленні послуги', 'error');
+                    }
+                });
+            }
+
+            const editAppointmentForm = document.getElementById('editAppointmentForm');
+            if (editAppointmentForm) {
+                editAppointmentForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const id = formData.get('id');
+                    try {
+                        const response = await fetch(`http://localhost:5000/api/appointments/${id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                clientName: formData.get('client_name'),
+                                serviceId: formData.get('service_id'),
+                                barberId: formData.get('barber_id'),
+                                date: formData.get('booking_date'),
+                                time: formData.get('booking_time'),
+                                status: formData.get('status')
+                            })
+                        });
+                        if (response.ok) {
+                            showMessage('Запис успішно оновлено', 'success');
+                            closeModal('editAppointmentModal');
+                            location.reload();
+                        } else {
+                            const error = await response.json();
+                            showMessage(error.message || 'Помилка при оновленні запису', 'error');
+                        }
+                    } catch (error) {
+                        showMessage('Помилка при оновленні запису', 'error');
+                    }
+                });
+            }
+        });
+
+        function editAppointment(id, clientName, serviceId, barberId, date, time, status) {
+            document.getElementById('editAppointmentId').value = id;
+            document.getElementById('editAppointmentClient').value = clientName;
+            document.getElementById('editAppointmentDate').value = date ? new Date(date).toISOString().split('T')[0] : '';
+            document.getElementById('editAppointmentTime').value = time || '';
+
+            Promise.all([
+                fetch('http://localhost:5000/api/services').then(res => res.json()),
+                fetch('http://localhost:5000/api/barbers').then(res => res.json())
+            ]).then(([services, barbers]) => {
+                const serviceSelect = document.getElementById('editAppointmentService');
+                const barberSelect = document.getElementById('editAppointmentBarber');
+                const statusSelect = document.getElementById('editAppointmentStatus');
+
+                serviceSelect.innerHTML = '<option value="">Виберіть послугу</option>';
+                services.forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service._id;
+                    option.textContent = `${service.name} - ${service.price} грн`;
+                    if (service._id === serviceId) option.selected = true;
+                    serviceSelect.appendChild(option);
+                });
+
+                barberSelect.innerHTML = '<option value="">Виберіть барбера</option>';
+                barbers.forEach(barber => {
+                    const option = document.createElement('option');
+                    option.value = barber._id;
+                    option.textContent = `${barber.name}${barber.position ? ' - ' + barber.position : ''}`;
+                    if (barber._id === barberId) option.selected = true;
+                    barberSelect.appendChild(option);
+                });
+
+                if (statusSelect) statusSelect.value = status || 'pending';
+            });
+
+            document.getElementById('editAppointmentModal').style.display = 'block';
+        }
+
+        function editService(id, name, description, price, duration, image_url) {
+            document.getElementById('editServiceId').value = id;
+            document.getElementById('editServiceName').value = name;
+            document.getElementById('editServiceDescription').value = description;
+            document.getElementById('editServicePrice').value = price;
+            document.getElementById('editServiceDuration').value = duration;
+            document.getElementById('editServiceImage').value = image_url || '';
+            
+            document.getElementById('editServiceModal').style.display = 'block';
+        }
+
+        async function editBarber(id, name, experience, rankId, image) {
+            document.getElementById('editBarberId').value = id;
+            document.getElementById('editBarberName').value = name;
+            document.getElementById('editBarberExperience').value = experience;
+            document.getElementById('editBarberImage').value = image || '';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/ranks');
+                if (!response.ok) {
+                    console.log('Failed to load ranks');
+                }
+                const ranks = await response.json();
+                const rankSelect = document.getElementById('editBarberRank');
+                
+                rankSelect.innerHTML = '<option value="">Виберіть ранг</option>';
+                ranks.forEach(rank => {
+                    const option = document.createElement('option');
+                    option.value = rank._id;
+                    option.textContent = rank.name;
+                    if (rank._id === rankId) option.selected = true;
+                    rankSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading ranks:', error);
+                showMessage('Помилка завантаження рангів', 'error');
+            }
+            
+            document.getElementById('editBarberModal').style.display = 'block';
+        }
+
+        async function loadRanks() {
+            try {
+                const response = await fetch('http://localhost:5000/api/ranks');
+                if (!response.ok) {
+                    throw new Error('Failed to load ranks');
+                }
+                const ranks = await response.json();
+                const rankSelect = document.getElementById('barberRank');
+                if (!rankSelect) return;
+                rankSelect.innerHTML = '<option value="">Виберіть ранг</option>';
+                ranks.forEach(rank => {
+                    const option = document.createElement('option');
+                    option.value = rank._id;
+                    option.textContent = rank.name;
+                    rankSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading ranks:', error);
+                showMessage('Помилка завантаження рангів', 'error');
+            }
+        }
+
+        const rankForm = document.getElementById('rankForm');
+        if (rankForm) {
+            rankForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const rankData = {
+                    name: document.getElementById('rankName').value,
+                    description: document.getElementById('rankDescription').value,
+                    level: parseInt(document.getElementById('rankLevel').value)
+                };
+
+                try {
+                    const response = await fetch('http://localhost:5000/api/ranks', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(rankData)
+                    });
+
+                    if (response.ok) {
+                        showMessage('Ранг успішно додано', 'success');
+                        document.getElementById('rankForm').reset();
+                        loadRanks();
+                        loadRanksList();
+                    } else {
+                        const error = await response.json();
+                        showMessage(error.message || 'Помилка при додаванні рангу', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showMessage('Помилка при відправці форми', 'error');
+                }
+            });
+        }
+
+        async function deleteRank(id) {
+            if (!confirm('Ви впевнені, що хочете видалити цей ранг?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/ranks/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showMessage('Ранг успішно видалено', 'success');
+                    loadRanks();
+                    loadRanksList();
+                } else {
+                    const error = await response.json();
+                    showMessage(error.message || 'Помилка при видаленні рангу', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Помилка при видаленні рангу', 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadRanks();
+            await loadRanksList();
+            await loadBarbers();
+            await loadServices();
+        });
+
+        async function loadBarbers() {
+            try {
+                const response = await fetch('http://localhost:5000/api/barbers');
+                if (!response.ok) {
+                    throw new Error('Failed to load barbers');
+                }
+                const barbers = await response.json();
+                const barbersList = document.getElementById('barbersList');
+                const bookingBarber = document.getElementById('bookingBarber');
+                
+                barbersList.innerHTML = '';
+                bookingBarber.innerHTML = '<option value="">Виберіть барбера</option>';
+                
+                barbers.forEach(barber => {
+                    const barberElement = document.createElement('div');
+                    barberElement.className = 'list-item';
+                    barberElement.innerHTML = `
+                        <div>
+                            <p>Ім'я: ${barber.name}</p>
+                            <p>Посада: ${barber.position || ''}</p>
+                            <p>Досвід: ${barber.experience} років</p>
+                            <p>Опис: ${barber.description || ''}</p>
+                            <p>Зображення: <img src="${barber.image_url || ''}" alt="${barber.name}" style="max-width:80px;max-height:80px;"></p>
+                            <p>Ранг: ${barber.rang || (barber.rank && barber.rank.name) || 'Не вказано'}</p>
+                        </div>
+                        <div class="button-group">
+                            <button onclick="editBarber('${barber._id}', '${barber.name}', ${barber.experience}, '${barber.rank ? barber.rank._id : ''}', '${barber.image || barber.image_url || ''}')">Редагувати</button>
+                            <button onclick="deleteBarber('${barber._id}')">Видалити</button>
+                        </div>
+                    `;
+                    barbersList.appendChild(barberElement);
+
+                    const option = document.createElement('option');
+                    option.value = barber._id;
+                    option.textContent = `${barber.name}${barber.position ? ' - ' + barber.position : ''}`;
+                    bookingBarber.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading barbers:', error);
+                showMessage('Помилка завантаження списку барберів', 'error');
+            }
+        }
+
+        async function loadServices() {
+            try {
+                const response = await fetch('http://localhost:5000/api/services');
+                if (!response.ok) {
+                    throw new Error('Failed to load services');
+                }
+                const services = await response.json();
+                const servicesList = document.getElementById('servicesList');
+                const bookingService = document.getElementById('bookingService');
+                
+                servicesList.innerHTML = '';
+                bookingService.innerHTML = '<option value="">Виберіть послугу</option>';
+                
+                services.forEach(service => {
+                    const serviceElement = document.createElement('div');
+                    serviceElement.className = 'list-item';
+                    serviceElement.innerHTML = `
+                        <div>
+                            <p>Назва: ${service.name}</p>
+                            <p>Ціна: ${service.price} грн</p>
+                            <p>Тривалість: ${service.duration} хв</p>
+                        </div>
+                        <div class="button-group">
+                            <button onclick="editService('${service._id}', '${service.name}', '${service.description}', ${service.price}, ${service.duration}, '${service.image_url}')">Редагувати</button>
+                            <button onclick="deleteService('${service._id}')">Видалити</button>
+                        </div>
+                    `;
+                    servicesList.appendChild(serviceElement);
+
+                    const option = document.createElement('option');
+                    option.value = service._id;
+                    option.textContent = `${service.name} - ${service.price} грн`;
+                    bookingService.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading services:', error);
+                showMessage('Помилка завантаження списку послуг', 'error');
+            }
+        }
+
+        async function loadRanksList() {
+            try {
+                const response = await fetch('http://localhost:5000/api/ranks');
+                if (!response.ok) {
+                    throw new Error('Failed to load ranks');
+                }
+                const ranks = await response.json();
+                const ranksList = document.getElementById('ranksList');
+                
+                ranksList.innerHTML = '<h3>Список рангів</h3>';
+                
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Назва</th>
+                            <th>Опис</th>
+                            <th>Рівень</th>
+                            <th>Дії</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+                
+                const tbody = table.querySelector('tbody');
+                ranks.forEach(rank => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${rank.name}</td>
+                        <td>${rank.description}</td>
+                        <td>${rank.level}</td>
+                        <td>
+                            <button onclick="deleteRank('${rank._id}')">Видалити</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                
+                ranksList.appendChild(table);
+            } catch (error) {
+                console.error('Error loading ranks list:', error);
+                showMessage('Помилка завантаження списку рангів', 'error');
+            }
+        }
+
+        // Users management
+        async function loadUsers() {
+            try {
+                const response = await fetch('http://localhost:5000/api/users');
+                if (!response.ok) {
+                    throw new Error('Failed to load users');
+                }
+                const users = await response.json();
+                const tbody = document.querySelector('#usersTable tbody');
+                tbody.innerHTML = '';
+                
+                users.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user._id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td>
+                            <button class="user-action-btn" onclick="openEditUser('${user._id}')">Редагувати</button>
+                            <button class="user-action-btn delete" onclick="deleteUser('${user._id}')">Видалити</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showMessage('Помилка завантаження користувачів', 'error');
+            }
+        }
+
+        async function openEditUser(id) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/users/${id}`);
+                if (!response.ok) {
+                    throw new Error('Failed to load user data');
+                }
+                const user = await response.json();
+                
+                document.getElementById('editUserId').value = user._id;
+                document.getElementById('editUserName').value = user.name;
+                document.getElementById('editUserEmail').value = user.email;
+                document.getElementById('editUserPhone').value = user.phone || '';
+                document.getElementById('editUserRole').value = user.role;
+                
+                showModal('editUserModal');
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showMessage('Помилка завантаження даних користувача', 'error');
+            }
+        }
+
+        document.getElementById('editUserForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('editUserId').value;
+            const name = document.getElementById('editUserName').value;
+            const email = document.getElementById('editUserEmail').value;
+            const role = document.getElementById('editUserRole').value;
+            const phone = document.getElementById('editUserPhone').value;
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, email, role, phone })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update user');
+                }
+
+                const data = await response.json();
+                // Якщо оновлюється поточний користувач — оновити localStorage
+                if (id === localStorage.getItem('userId') && data.user && data.user.phone) {
+                    localStorage.setItem('userPhone', data.user.phone);
+                }
+
+                await loadUsers();
+                closeModal('editUserModal');
+                showMessage('Користувача оновлено успішно', 'success');
+            } catch (error) {
+                console.error('Error updating user:', error);
+                showMessage('Помилка оновлення користувача', 'error');
+            }
+        };
+
+        async function deleteUser(id) {
+            if (!confirm('Ви впевнені, що хочете видалити цього користувача?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete user');
+                }
+
+                await loadUsers();
+                showMessage('Користувача видалено успішно', 'success');
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showMessage('Помилка видалення користувача', 'error');
+            }
+        }
+
+        // Load users when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+        });
+
+        // Load users when switching to the users tab
+        document.querySelector('button[onclick="showTab(\'users\')"]').addEventListener('click', loadUsers);
+    </script>
+</body>
+</html> 
