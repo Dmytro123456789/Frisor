@@ -3,58 +3,54 @@ const mongoose = require('mongoose');
 const rankSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: String,
-    level: Number
+    level: { type: Number, required: true },
 });
 
 const barberSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    rank: { type: mongoose.Schema.Types.ObjectId, ref: 'Rank' },
-    experience: { type: Number, default: 0 },
-    specialties: [String],
+    experience: { type: Number, required: true },
+    description: String,
     image: String,
-    schedule: {
-        monday: { start: String, end: String },
-        tuesday: { start: String, end: String },
-        wednesday: { start: String, end: String },
-        thursday: { start: String, end: String },
-        friday: { start: String, end: String },
-        saturday: { start: String, end: String },
-        sunday: { start: String, end: String }
-    }
+    rank: { type: mongoose.Schema.Types.ObjectId, ref: 'Rank' },
 });
 
 const serviceSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    description: String,
+    description: { type: String, required: true },
     price: { type: Number, required: true },
-    duration: { type: Number, required: true }
+    duration: { type: Number, required: true },
+    image_url: String,
 });
 
 const appointmentSchema = new mongoose.Schema({
-    barberId: { type: mongoose.Schema.Types.ObjectId, ref: 'Barber', required: true },
-    serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true },
-    date: { type: Date, required: true },
-    time: { type: String, required: true },
     clientName: { type: String, required: true },
     clientPhone: { type: String, required: true },
-    status: { type: String, enum: ['pending', 'confirmed', 'completed', 'cancelled'], default: 'pending' },
+    serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true },
+    barberId: { type: mongoose.Schema.Types.ObjectId, ref: 'Barber', required: true },
+    date: { type: Date, required: true },
+    time: { type: String, required: true },
+    status: {
+        type: String,
+        enum: ['pending', 'confirmed', 'completed', 'cancelled'],
+        default: 'pending',
+    },
+    notes: String,
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    notes: { type: String }
 });
 
-// User schema
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     phone: { type: String },
-    role: { type: String, enum: ['user', 'admin'], default: 'user' }
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = {
-    User: mongoose.model('User', userSchema, 'users'),
-    Rank: mongoose.model('Rank', rankSchema, 'ranks'),
-    Barber: mongoose.model('Barber', barberSchema, 'barbers'),
-    Service: mongoose.model('Service', serviceSchema, 'services'),
-    Appointment: mongoose.model('Appointment', appointmentSchema, 'appointments')
-}; 
+const Rank = mongoose.model('Rank', rankSchema);
+const Barber = mongoose.model('Barber', barberSchema);
+const Service = mongoose.model('Service', serviceSchema);
+const Appointment = mongoose.model('Appointment', appointmentSchema);
+const User = mongoose.model('User', userSchema);
+
+module.exports = { Rank, Barber, Service, Appointment, User }; 

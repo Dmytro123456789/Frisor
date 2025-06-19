@@ -92,12 +92,6 @@ body {
     background: #00b894;
     color: #00312d;
 }
-
-.list-container {
-    display: grid;
-    gap: 2rem;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-}
 .list-item {
     background: #f2f2df;
     padding: 2rem 1.5rem 1.5rem 1.5rem;
@@ -272,9 +266,6 @@ body {
 @media (max-width: 900px) {
     .admin-section {
         padding: 1.2rem 0.2rem;
-    }
-    .list-container {
-        grid-template-columns: 1fr;
     }
     .modal-content {
         padding: 1.2rem 0.5rem;
@@ -456,4 +447,22 @@ body {
 #editUserModal button[type=submit]:hover {
     background: #00b894;
     color: #00312d;
+}
+
+.list-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+@media (max-width: 1100px) {
+    .list-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .list-container {
+        grid-template-columns: 1fr;
+    }
 }

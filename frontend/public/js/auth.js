@@ -1,125 +1,101 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Form elements
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const toggleBtns = document.querySelectorAll('.toggle-btn');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const loginBtn = document.getElementById('loginBtn');
+const registerBtn = document.getElementById('registerBtn');
+const messageDiv = document.getElementById('message');
 
-    // Toggle between forms
-    toggleBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const formType = btn.dataset.form;
-            
-            // Update active button
-            toggleBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            // Show/hide forms
-            document.querySelectorAll('.form').forEach(form => {
-                form.classList.remove('active');
-            });
-            document.getElementById(`${formType}-form`).classList.add('active');
-        });
+function toggleForms(showLogin = true) {
+  loginBtn.classList.toggle('active', showLogin);
+  registerBtn.classList.toggle('active', !showLogin);
+  loginForm.style.display = showLogin ? 'block' : 'none';
+  registerForm.style.display = showLogin ? 'none' : 'block';
+}
+
+function showMessage(text, type = 'info') {
+  messageDiv.textContent = text;
+  messageDiv.className = `message ${type}`;
+  messageDiv.style.display = 'block';
+  setTimeout(() => {
+    messageDiv.style.display = 'none';
+  }, 3000);
+}
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData(loginForm);
+  try {
+    const res = await fetch('http://localhost:5000/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: formData.get('email'),
+        password: formData.get('password'),
+      }),
     });
 
-    // Form validation and submission
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      showMessage('Login successful! Redirecting...', 'success');
+      if (data.role === 'admin') {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'user-bookings.html';
+      }
+    } else {
+      showMessage(data.message || 'Login failed', 'error');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    showMessage('An error occurred during login', 'error');
+  }
+});
 
-        if (!email || !password) {
-            alert('Please fill in all fields');
-            return;
-        }
+registerForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData(registerForm);
+  const password = formData.get('password');
+  const confirmPassword = formData.get('confirmPassword');
 
-        try {
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
+  if (password !== confirmPassword) {
+    showMessage('Passwords do not match', 'error');
+    return;
+  }
 
-            const data = await response.json();
-
-            if (response.ok) {
-                // Redirect based on user role
-                if (data.role === 'admin') {
-                    window.location.href = '/admin';
-                } else {
-                    window.location.href = '/dashboard';
-                }
-            } else {
-                alert(data.message || 'Login failed');
-            }
-        } catch (error) {
-            alert('An error occurred. Please try again.');
-            console.error('Login error:', error);
-        }
+  try {
+    const res = await fetch('http://localhost:5000/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        password: formData.get('password'),
+      }),
     });
 
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const name = document.getElementById('register-name').value;
-        const email = document.getElementById('register-email').value;
-        const password = document.getElementById('register-password').value;
-        const confirmPassword = document.getElementById('register-confirm-password').value;
+    const data = await res.json();
+    if (res.ok) {
+      showMessage('Registration successful! Please log in.', 'success');
+      toggleForms(true);
+      registerForm.reset();
+    } else {
+      showMessage(data.message || 'Registration failed', 'error');
+    }
+  } catch (error) {
+    console.error('Registration error:', error);
+    showMessage('An error occurred during registration', 'error');
+  }
+});
 
-        // Validation
-        if (!name || !email || !password || !confirmPassword) {
-            alert('Please fill in all fields');
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            alert('Passwords do not match');
-            return;
-        }
-
-        if (password.length < 6) {
-            alert('Password must be at least 6 characters long');
-            return;
-        }
-
-        try {
-            const response = await fetch('/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name, email, password }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert('Registration successful! Please login.');
-                // Switch to login form
-                document.querySelector('[data-form="login"]').click();
-                // Clear register form
-                registerForm.reset();
-            } else {
-                alert(data.message || 'Registration failed');
-            }
-        } catch (error) {
-            alert('An error occurred. Please try again.');
-            console.error('Registration error:', error);
-        }
+document.querySelectorAll('.form-group input').forEach(input => {
+  const label = input.previousElementSibling;
+  if (label && label.tagName === 'LABEL') {
+    input.addEventListener('focus', () => label.classList.add('active'));
+    input.addEventListener('blur', () => {
+      if (!input.value) label.classList.remove('active');
     });
-
-    // Add floating label effect
-    document.querySelectorAll('.form-group input').forEach(input => {
-        input.addEventListener('focus', () => {
-            input.parentElement.classList.add('focused');
-        });
-
-        input.addEventListener('blur', () => {
-            if (!input.value) {
-                input.parentElement.classList.remove('focused');
-            }
-        });
-    });
+    if (input.value) label.classList.add('active');
+  }
 }); 

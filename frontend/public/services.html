@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Послуги - Frisor Barbershop</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -95,18 +95,8 @@
         }
         loadServices();
 
-        document.getElementById('adminLoginBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const password = prompt('Введіть пароль для входу в адмін-панель:');
-            if (password === 'admin123') {
-                sessionStorage.setItem('isAdmin', 'true');
-                window.location.href = 'admin.html';
-            } else {
-                alert('Невірний пароль!');
-            }
-        });
     </script>
-    <script src="header-auth.js"></script>
-    <script src="footer-auth.js"></script>
+    <script src="js/header-auth.js"></script>
+    <script src="js/footer-auth.js"></script>
 </body>
 </html> 

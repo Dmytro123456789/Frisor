@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Барбери - Frisor Barbershop</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body style="background-color: #f2f2df;">
@@ -68,13 +68,14 @@
                 const barbers = await response.json();
                 const barbersList = document.getElementById('barbersList');
                 barbersList.innerHTML = '';
-                barbers.forEach(barber => {
+                barbers.forEach((barber, index) => {
                     const barberElement = document.createElement('div');
                     barberElement.className = 'barber-card';
+                    const photoNumber = index + 1;
+                    const photoUrl = `img/barber${photoNumber}.jpg`;
                     barberElement.innerHTML = `
-                        <img src="${barber.image_url || ''}" alt="${barber.name}" style="max-width:120px;max-height:120px; border-radius:50%; margin-bottom:0.5rem;">
+                        <img src="${photoUrl}" alt="${barber.name}" style="max-width:120px;max-height:120px; border-radius:50%; margin-bottom:0.5rem;">
                         <h3>${barber.name}</h3>
-                        <p><b>Посада:</b> ${barber.position || ''}</p>
                         <p><b>Досвід:</b> ${barber.experience} років</p>
                         <p><b>Опис:</b> ${barber.description || ''}</p>
                         <p><b>Ранг:</b> ${barber.rang || (barber.rank && barber.rank.name) || 'Не вказано'}</p>
@@ -86,7 +87,7 @@
             }
         });
     </script>
-    <script src="header-auth.js"></script>
-    <script src="footer-auth.js"></script>
+    <script src="js/header-auth.js"></script>
+    <script src="js/footer-auth.js"></script>
 </body>
 </html> 
