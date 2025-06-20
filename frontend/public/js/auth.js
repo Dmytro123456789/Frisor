@@ -24,7 +24,7 @@ loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const formData = new FormData(loginForm);
   try {
-    const res = await fetch('http://localhost:5000/api/auth/login', {
+    const res = await fetch(`${window.API_BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -64,7 +64,7 @@ registerForm.addEventListener('submit', async (e) => {
   }
 
   try {
-    const res = await fetch('http://localhost:5000/api/auth/register', {
+    const res = await fetch(`${window.API_BASE_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

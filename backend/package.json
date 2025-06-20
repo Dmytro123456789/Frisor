@@ -2,10 +2,11 @@
   "name": "frisor-backend",
   "version": "1.0.0",
   "description": "Backend for Frisor Barbershop",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "build": "echo 'Build completed'"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -16,5 +17,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

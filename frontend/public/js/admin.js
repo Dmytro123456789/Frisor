@@ -42,7 +42,7 @@ function showMessage(text, type = 'info') {
 
 async function loadRanks() {
   try {
-      const res = await fetch('http://localhost:5000/api/ranks');
+      const res = await fetch(`${window.API_BASE_URL}/api/ranks`);
       const ranks = await res.json();
       const select = document.getElementById('barberRank');
       if (!select) return;
@@ -60,7 +60,7 @@ async function loadRanks() {
 
 async function loadRanksList() {
   try {
-      const res = await fetch('http://localhost:5000/api/ranks');
+      const res = await fetch(`${window.API_BASE_URL}/api/ranks`);
       const ranks = await res.json();
       const container = document.getElementById('ranksList');
       container.innerHTML = '<h3>Список рангів</h3>';
@@ -90,7 +90,7 @@ async function loadRanksList() {
 async function deleteRank(id) {
   if (!confirm('Ви впевнені, що хочете видалити цей ранг?')) return;
   try {
-      const res = await fetch(`http://localhost:5000/api/ranks/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${window.API_BASE_URL}/api/ranks/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Не вдалося видалити ранг');
       showMessage('Ранг успішно видалено', 'success');
       loadRanks();
@@ -103,7 +103,7 @@ async function deleteRank(id) {
 
 async function loadBarbers() {
   try {
-      const res = await fetch('http://localhost:5000/api/barbers');
+      const res = await fetch(`${window.API_BASE_URL}/api/barbers`);
       if (!res.ok) throw new Error('Не вдалося завантажити барберів');
       const barbers = await res.json();
       const list = document.getElementById('barbersList');
@@ -146,7 +146,7 @@ async function loadBarbers() {
 async function deleteBarber(id) {
   if (!confirm('Ви впевнені, що хочете видалити цього барбера?')) return;
   try {
-      const res = await fetch(`http://localhost:5000/api/barbers/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${window.API_BASE_URL}/api/barbers/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Не вдалося видалити барбера');
       showMessage('Барбер успішно видалений', 'success');
       loadBarbers();
@@ -163,7 +163,7 @@ async function editBarber(id, name, experience, rankId, image_url) {
   document.getElementById('editBarberImage').value = image_url || '';
 
   try {
-      const res = await fetch('http://localhost:5000/api/ranks');
+      const res = await fetch(`${window.API_BASE_URL}/api/ranks`);
       if (!res.ok) throw new Error('Не вдалося завантажити ранги');
       const ranks = await res.json();
       const select = document.getElementById('editBarberRank');
@@ -185,7 +185,7 @@ async function editBarber(id, name, experience, rankId, image_url) {
 
 async function loadServices() {
   try {
-      const res = await fetch('http://localhost:5000/api/services');
+      const res = await fetch(`${window.API_BASE_URL}/api/services`);
       if (!res.ok) throw new Error('Не вдалося завантажити послуги');
       const services = await res.json();
       const list = document.getElementById('servicesList');
@@ -225,7 +225,7 @@ async function loadServices() {
 async function deleteService(id) {
   if (!confirm('Ви впевнені, що хочете видалити цю послугу?')) return;
   try {
-      const res = await fetch(`http://localhost:5000/api/services/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${window.API_BASE_URL}/api/services/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Не вдалося видалити послугу');
       showMessage('Послуга успішно видалена', 'success');
       loadServices();
@@ -253,7 +253,7 @@ function setupEditServiceForm() {
       const formData = new FormData(form);
       const id = formData.get('id');
       try {
-          const res = await fetch(`http://localhost:5000/api/services/${id}`, {
+          const res = await fetch(`${window.API_BASE_URL}/api/services/${id}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -281,7 +281,7 @@ function setupEditServiceForm() {
 
 async function loadAppointments() {
   try {
-      const res = await fetch('http://localhost:5000/api/appointments');
+      const res = await fetch(`${window.API_BASE_URL}/api/appointments`);
       if (!res.ok) throw new Error('Не вдалося завантажити записи');
       const appointments = await res.json();
       const container = document.getElementById('appointmentsList');
@@ -318,7 +318,7 @@ function setupEditAppointmentForm() {
       const formData = new FormData(form);
       const id = formData.get('id');
       try {
-          const res = await fetch(`http://localhost:5000/api/appointments/${id}`, {
+          const res = await fetch(`${window.API_BASE_URL}/api/appointments/${id}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -354,8 +354,8 @@ function editAppointment(id, clientName, serviceId, barberId, date, time, status
   document.getElementById('editAppointmentTime').value = time || '';
 
   Promise.all([
-      fetch('http://localhost:5000/api/services').then(r => r.json()),
-      fetch('http://localhost:5000/api/barbers').then(r => r.json())
+      fetch(`${window.API_BASE_URL}/api/services`).then(r => r.json()),
+      fetch(`${window.API_BASE_URL}/api/barbers`).then(r => r.json())
   ]).then(([services, barbers]) => {
       const serviceSelect = document.getElementById('editAppointmentService');
       const barberSelect = document.getElementById('editAppointmentBarber');
@@ -388,7 +388,7 @@ function editAppointment(id, clientName, serviceId, barberId, date, time, status
 async function deleteAppointment(id) {
   if (!confirm('Ви впевнені, що хочете видалити цей запис?')) return;
   try {
-      const res = await fetch(`http://localhost:5000/api/appointments/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${window.API_BASE_URL}/api/appointments/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Не вдалося видалити запис');
       showMessage('Запис успішно видалено', 'success');
       loadAppointments();
@@ -400,7 +400,7 @@ async function deleteAppointment(id) {
 
 async function loadUsers() {
   try {
-      const res = await fetch('http://localhost:5000/api/users');
+      const res = await fetch(`${window.API_BASE_URL}/api/users`);
       if (!res.ok) throw new Error('Не вдалося завантажити користувачів');
       const users = await res.json();
       const tbody = document.querySelector('#usersTable tbody');
@@ -443,7 +443,7 @@ function setupEditUserForm() {
       const formData = new FormData(form);
       const id = formData.get('id');
       try {
-          const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+          const res = await fetch(`${window.API_BASE_URL}/api/users/${id}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -471,7 +471,7 @@ function setupEditUserForm() {
 async function deleteUser(id) {
   if (!confirm('Ви впевнені, що хочете видалити цього користувача?')) return;
   try {
-      const res = await fetch(`http://localhost:5000/api/users/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${window.API_BASE_URL}/api/users/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Не вдалося видалити користувача');
       showMessage('Користувач успішно видалений', 'success');
       loadUsers();
@@ -485,7 +485,7 @@ document.getElementById('addBookingForm')?.addEventListener('submit', async e =>
   e.preventDefault();
   const formData = new FormData(e.target);
   try {
-      const res = await fetch('http://localhost:5000/api/appointments', {
+      const res = await fetch(`${window.API_BASE_URL}/api/appointments`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

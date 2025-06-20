@@ -91,7 +91,7 @@
       return;
     }
     try {
-      const res = await fetch('http://localhost:5000/api/appointments');
+      const res = await fetch(`${window.API_BASE_URL}/api/appointments`);
       const all = await res.json();
       const my = all.filter(b => b.userId === userId);
       if (!my.length) {
@@ -116,7 +116,7 @@
   window.cancelUserBooking = async function(id) {
     if (!confirm('Скасувати цей запис?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/appointments/${id}`, {
+      const res = await fetch(`${window.API_BASE_URL}/api/appointments/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'cancelled' })
@@ -127,7 +127,7 @@
   window.deleteUserBooking = async function(id) {
     if (!confirm('Видалити цей запис?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/appointments/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${window.API_BASE_URL}/api/appointments/${id}`, { method: 'DELETE' });
       if (res.ok) loadUserBookings();
     } catch {}
   }
