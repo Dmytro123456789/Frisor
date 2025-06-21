@@ -68,7 +68,7 @@
             const grid = document.getElementById('servicesGrid');
             grid.innerHTML = '';
             try {
-                const res = await fetch('http://localhost:5000/api/services');
+                const res = await fetch(`${window.API_BASE_URL}/api/services`);
                 const services = await res.json();
                 if (!services.length) {
                     grid.innerHTML = '<p>Послуги не знайдено.</p>';
