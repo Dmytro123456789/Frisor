@@ -6,10 +6,15 @@ const path = require('path');
 const app = express();
 
 // CORS configuration for production
+const whitelist = ['http://localhost:3000', 'http://localhost:5000', 'https://frisorb.vercel.app'];
 const corsOptions = {
-    origin: process.env.NODE_ENV === 'production' 
-        ? 'https://frisorb.vercel.app'
-        : ['http://localhost:3000', 'http://localhost:5000'],
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     optionsSuccessStatus: 200
 };
