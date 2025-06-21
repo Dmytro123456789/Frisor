@@ -9,6 +9,7 @@ const app = express();
 const whitelist = ['http://localhost:3000', 'http://localhost:5000', 'https://frisorb.vercel.app'];
 const corsOptions = {
     origin: function (origin, callback) {
+        console.log('Request origin:', origin);
         if (whitelist.indexOf(origin) !== -1 || !origin) {
             callback(null, true);
         } else {
