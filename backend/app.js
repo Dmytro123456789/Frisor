@@ -25,7 +25,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB connection with environment variables
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://admin:admin123@barbershop.y5grhe0.mongodb.net/barbershop?retryWrites=true&w=majority';
+let MONGODB_URI = process.env.MONGODB_URI;
+if (process.env.NODE_ENV !== 'production') {
+    if (!MONGODB_URI) {
+        throw new Error('MONGODB_URI is not defined. Please create a .env file for local development.');
+    }
+} else {
+    // Fallback for production if the env var is somehow missing (not recommended)
+    MONGODB_URI = MONGODB_URI || 'mongodb+srv://admin:admin123@barbershop.y5grhe0.mongodb.net/barbershop?retryWrites=true&w=majority';
+}
 
 mongoose.connect(MONGODB_URI)
 .then(() => console.log('Connected to MongoDB'))
