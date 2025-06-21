@@ -8,7 +8,7 @@ const app = express();
 // CORS configuration for production
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://your-frontend-domain.vercel.app', 'https://your-frontend-domain.vercel.app/']
+        ? ['https://frisor.onrender.com/']
         : ['http://localhost:3000', 'http://localhost:5000'],
     credentials: true,
     optionsSuccessStatus: 200
@@ -21,10 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 // MongoDB connection with environment variables
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://admin:admin123@barbershop.y5grhe0.mongodb.net/barbershop?retryWrites=true&w=majority';
 
-mongoose.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+mongoose.connect(MONGODB_URI)
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
 
