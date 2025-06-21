@@ -8,7 +8,7 @@ const app = express();
 // CORS configuration for production
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://frisor.onrender.com/']
+        ? ['https://frisorb.vercel.app', 'https://frisorb.vercel.app/']
         : ['http://localhost:3000', 'http://localhost:5000'],
     credentials: true,
     optionsSuccessStatus: 200
